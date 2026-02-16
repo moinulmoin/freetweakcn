@@ -101,6 +101,21 @@ export async function getMyUsageStats(timeframe: Timeframe): Promise<UsageStats>
   }
 }
 
+export async function getMyDailyRequestCount(userId: string): Promise<number> {
+  try {
+    const today = getDaysSinceEpoch(0);
+    const result = await db
+      .select({ count: count() })
+      .from(aiUsage)
+      .where(and(eq(aiUsage.userId, userId), eq(aiUsage.daysSinceEpoch, today.toString())));
+
+    return result[0]?.count ?? 0;
+  } catch (error) {
+    console.error("Error getting daily request count:", error);
+    throw error;
+  }
+}
+
 export async function getMyAllTimeRequestCount(userId: string): Promise<number> {
   try {
     const result = await db

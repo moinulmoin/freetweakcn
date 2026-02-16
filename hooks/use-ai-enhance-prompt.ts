@@ -3,7 +3,6 @@
 import { toast } from "@/hooks/use-toast";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
-import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { AIPromptData } from "@/types/ai";
 import { convertPromptDataToJSONContent } from "@/utils/ai/ai-prompt";
 import { useCompletion } from "@ai-sdk/react";
@@ -12,7 +11,6 @@ import posthog from "posthog-js";
 import { useCallback, useMemo, useRef } from "react";
 
 export function useAIEnhancePrompt() {
-  const { openGetProDialog } = useGetProDialogStore();
   const { complete, completion, isLoading, stop, setCompletion } = useCompletion({
     api: "/api/enhance-prompt",
     onError: (error) => {
@@ -27,9 +25,6 @@ export function useAIEnhancePrompt() {
         });
       } catch {}
 
-      if (normalized.code === "SUBSCRIPTION_REQUIRED") {
-        openGetProDialog();
-      }
 
       toast({
         title: "An error occurred",

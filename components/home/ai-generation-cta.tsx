@@ -48,7 +48,7 @@ export function AIGenerationCTA() {
                       variant="outline"
                       className="border-primary/20 bg-background/50 hover:bg-accent/50 h-14 rounded-full px-8 text-lg backdrop-blur-sm"
                     >
-                      View Pricing
+                      It's Free
                     </Button>
                   </Link>
                 </div>

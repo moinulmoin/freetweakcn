@@ -1,25 +1,20 @@
 import "server-only";
 
-import { createGoogleGenerativeAI, GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { customProvider } from "ai";
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_API_KEY,
+const glm = createOpenAICompatible({
+  name: "glm",
+  baseURL: process.env.GLM_BASE_URL!,
+  apiKey: process.env.GLM_API_KEY!,
 });
 
-export const baseProviderOptions = {
-  google: {
-    thinkingConfig: {
-      includeThoughts: false,
-      thinkingBudget: 128,
-    },
-  } satisfies GoogleGenerativeAIProviderOptions,
-};
+export const baseProviderOptions = {};
 
 export const myProvider = customProvider({
   languageModels: {
-    base: google("gemini-2.5-flash"),
-    "theme-generation": google("gemini-3-flash-preview"),
-    "prompt-enhancement": google("gemini-2.5-flash"),
+    base: glm.chatModel(process.env.GLM_BASE_MODEL_ID ?? "glm-4.6v"),
+    "theme-generation": glm.chatModel(process.env.GLM_THEME_MODEL_ID ?? "glm-4.7"),
+    "prompt-enhancement": glm.chatModel(process.env.GLM_PROMPT_MODEL_ID ?? "glm-4.7-flash"),
   },
 });

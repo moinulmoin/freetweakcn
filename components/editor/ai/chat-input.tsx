@@ -39,7 +39,6 @@ export function ChatInput({
   const { messages, startNewChat } = useChatContext();
   const { checkValidSession, checkValidSubscription } = useGuards();
   const { subscriptionStatus } = useSubscription();
-  const isPro = subscriptionStatus?.isSubscribed ?? false;
   const hasFreeRequestsLeft = (subscriptionStatus?.requestsRemaining ?? 0) > 0;
 
   const {
@@ -161,7 +160,7 @@ export function ChatInput({
           </TooltipWrapper>
 
           <div className="flex items-center gap-2">
-            {(isPro || hasFreeRequestsLeft) && promptData?.content ? (
+            {hasFreeRequestsLeft && promptData?.content ? (
               <EnhancePromptButton
                 isEnhancing={isEnhancingPrompt}
                 onStart={handleEnhancePrompt}

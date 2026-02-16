@@ -6,7 +6,6 @@ import { authClient } from "@/lib/auth-client";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export function AlertBanner() {
@@ -16,14 +15,13 @@ export function AlertBanner() {
   const isLoggedIn = !!session?.user.id;
   const { subscriptionStatus, isPending } = useSubscription();
 
-  const isPro = subscriptionStatus?.isSubscribed ?? false;
-  const freeProMessagesLeft = subscriptionStatus?.requestsRemaining ?? 0;
+  const freeRequestsLeft = subscriptionStatus?.requestsRemaining ?? 0;
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
     const shouldShowBanner =
-      isLoggedIn && !isPro && freeProMessagesLeft <= AI_REQUEST_FREE_TIER_LIMIT;
+      isLoggedIn && freeRequestsLeft <= AI_REQUEST_FREE_TIER_LIMIT;
 
     if (shouldShowBanner) {
       if (showBanner) return;
@@ -35,30 +33,27 @@ export function AlertBanner() {
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, isPro, freeProMessagesLeft]);
+  }, [isLoggedIn, freeRequestsLeft]);
 
   const getBannerContent = () => {
-    if (isLoggedIn && !isPro && freeProMessagesLeft > 0) {
+    if (isLoggedIn && freeRequestsLeft > 0) {
       return (
         <span>
-          You have {freeProMessagesLeft} Free
-          <span className="text-primary font-medium">{` Pro `}</span>
-          messages left.
+          You have {freeRequestsLeft} free AI {freeRequestsLeft === 1 ? "request" : "requests"} left today.
         </span>
       );
     }
 
-    if (isLoggedIn && !isPro && freeProMessagesLeft <= 0) {
+    if (isLoggedIn && freeRequestsLeft <= 0) {
       return (
         <span>
-          Upgrade to <span className="text-primary font-medium">Pro</span> to unlock unlimited
-          requests.
+          Daily limit reached. Come back tomorrow!
         </span>
       );
     }
   };
 
-  if (isPro || isPending) return null;
+  if (isPending) return null;
 
   return (
     <BannerWrapper show={showBanner}>
@@ -66,22 +61,14 @@ export function AlertBanner() {
         <p className={cn("line-clamp-1 text-pretty @2xl/alert-banner:text-sm")}>
           {getBannerContent()}
         </p>
-        <div className="ml-auto flex items-center gap-1">
-          <Link href="/pricing">
-            <Button variant="link" size="sm" className="h-fit @2xl/alert-banner:text-sm">
-              Upgrade
-            </Button>
-          </Link>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-4 [&>svg]:size-3"
-            onClick={() => setShowBanner(false)}
-          >
-            <X />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-4 [&>svg]:size-3 ml-auto"
+          onClick={() => setShowBanner(false)}
+        >
+          <X />
+        </Button>
       </div>
     </BannerWrapper>
   );
