@@ -15,12 +15,12 @@ const faqs = [
   {
     question: "Is it free?",
     answer:
-      "Yes, the core features are completely free. We offer a Pro plan for advanced AI features.",
+      "Yes! tweakcn is completely free. You get full theme customization, AI theme generation, and cloud saving — no payment required.",
   },
   {
-    question: "What's included in Pro?",
+    question: "What about AI features?",
     answer:
-      "Pro includes AI theme generation from images and prompts, as well as cloud saving for multiple themes.",
+      "AI theme generation is free with a daily limit that resets every day. Just sign in to start generating themes from prompts or images.",
   },
   {
     question: "Supports Tailwind v4?",

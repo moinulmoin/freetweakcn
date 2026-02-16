@@ -115,21 +115,6 @@ export async function getMyDailyRequestCount(userId: string): Promise<number> {
     throw error;
   }
 }
-
-export async function getMyAllTimeRequestCount(userId: string): Promise<number> {
-  try {
-    const result = await db
-      .select({ count: count() })
-      .from(aiUsage)
-      .where(eq(aiUsage.userId, userId));
-
-    return result[0]?.count ?? 0;
-  } catch (error) {
-    console.error("Error getting all-time request count:", error);
-    throw error;
-  }
-}
-
 export async function getMyUsageChartData(timeframe: Timeframe): Promise<ChartDataPoint[]> {
   try {
     const userId = await getCurrentUserId();
