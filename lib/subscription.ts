@@ -17,7 +17,6 @@ export async function validateSubscriptionAndUsage(userId: string): Promise<Subs
     if (!canProceed) {
       return {
         canProceed: false,
-        isSubscribed: false,
         requestsUsed: requestsUsedToday,
         requestsRemaining: 0,
         error: `You've reached your daily free limit of ${AI_REQUEST_FREE_TIER_LIMIT} requests. Come back tomorrow!`,
@@ -26,7 +25,6 @@ export async function validateSubscriptionAndUsage(userId: string): Promise<Subs
 
     return {
       canProceed: true,
-      isSubscribed: false,
       requestsUsed: requestsUsedToday,
       requestsRemaining,
     };
