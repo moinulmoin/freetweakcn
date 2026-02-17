@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
           system: GENERATE_THEME_SYSTEM,
           messages: modelMessages,
           tools: THEME_GENERATION_TOOLS,
-          stopWhen: stepCountIs(5),
+          stopWhen: stepCountIs(3),
           onError: (error) => {
             console.error("[generate-theme] streamText error:", error);
           },
