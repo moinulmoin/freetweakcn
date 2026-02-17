@@ -2,7 +2,8 @@
 
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { useImageUpload } from "@/hooks/use-image-upload";
-import { createSyncedImageUploadReducer } from "@/hooks/use-image-upload-reducer";
+import { type PromptImageWithLoading } from "@/hooks/use-image-upload";
+import { imageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { MAX_IMAGE_FILES, MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
@@ -21,24 +22,37 @@ export function useAIChatForm() {
   const [isInitializing, startTransition] = useTransition();
   const hasInitialized = useRef(false);
 
-  const [uploadedImages, dispatch] = useReducer(
-    createSyncedImageUploadReducer(setImagesDraft),
-    [] // Always start with empty array to avoid stale initial state
-  );
+  const [uploadedImages, dispatch] = useReducer(imageUploadReducer, [] as PromptImageWithLoading[]);
 
   // Initialize uploadedImages from persisted draft once
   useEffect(() => {
-    if (!hasInitialized.current && imagesDraft.length > 0) {
-      hasInitialized.current = true;
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
 
-      startTransition(() => {
-        dispatch({
-          type: "INITIALIZE",
-          payload: imagesDraft.map(({ url }) => ({ url })),
-        });
+    if (imagesDraft.length === 0) return;
+
+    startTransition(() => {
+      dispatch({
+        type: "INITIALIZE",
+        payload: imagesDraft.map(({ url }) => ({ url })),
       });
-    }
-  }, [imagesDraft]);
+    });
+  }, [imagesDraft, startTransition]);
+
+  useEffect(() => {
+    if (!hasInitialized.current) return;
+
+    const syncedImagesDraft = uploadedImages
+      .filter((img) => !img.loading)
+      .map(({ url }) => ({ url }));
+
+    const hasSameLength = syncedImagesDraft.length === imagesDraft.length;
+    const hasSameUrls =
+      hasSameLength && syncedImagesDraft.every((img, index) => img.url === imagesDraft[index]?.url);
+
+    if (hasSameUrls) return;
+    setImagesDraft(syncedImagesDraft);
+  }, [uploadedImages, imagesDraft, setImagesDraft]);
 
   const {
     fileInputRef,

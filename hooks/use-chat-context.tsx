@@ -19,6 +19,12 @@ interface ChatContext extends ReturnType<typeof useChat<ChatMessage>> {
 
 const ChatContext = createContext<ChatContext | null>(null);
 
+const areMessagesEqual = (a: ChatMessage[], b: ChatMessage[]) => {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  return JSON.stringify(a) === JSON.stringify(b);
+};
+
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const storedMessages = useAIChatStore((s) => s.messages);
@@ -67,17 +73,18 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // Only update the stored messages when the chat is not currently processing a request
     if (chat.status === "ready" || chat.status === "error") {
-      console.log("----- ✅ Updating Stored Messages -----");
+      if (areMessagesEqual(chat.messages, storedMessages)) return;
       setStoredMessages(chat.messages);
     }
-  }, [chat.status, chat.messages]);
+  }, [chat.status, chat.messages, storedMessages, setStoredMessages]);
 
   useEffect(() => {
     if (!hasStoreHydrated || hasInitializedRef.current) return;
 
     if (storedMessages.length > 0) {
-      console.log("----- ☑️ Populating Chat with Stored Messages -----");
-      chat.setMessages(storedMessages);
+      if (!areMessagesEqual(chat.messages, storedMessages)) {
+        chat.setMessages(storedMessages);
+      }
     }
 
     hasInitializedRef.current = true;
