@@ -3,20 +3,10 @@
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import CustomTextarea from "@/components/editor/custom-textarea";
 import { JSONContent } from "@tiptap/react";
-import dynamic from "next/dynamic";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { UploadedImagePreview } from "./uploaded-image-preview";
-
-const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex min-h-[50px] w-full flex-col gap-1 p-1">
-      <div className="bg-muted h-3 w-full animate-pulse rounded-md text-sm" />
-      <div className="bg-muted h-3 w-full animate-pulse rounded-md text-sm" />
-    </div>
-  ),
-});
 
 interface AIChatFormBodyProps {
   isUserDragging: boolean;
