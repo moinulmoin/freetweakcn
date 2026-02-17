@@ -9,13 +9,14 @@ import { AdditionalAIContext, ChatMessage } from "@/types/ai";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
 import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
 import { createUIMessageStream, createUIMessageStreamResponse, stepCountIs, streamText } from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
+const redis = Redis.fromEnv();
 const ratelimit = new Ratelimit({
-  redis: kv,
+  redis,
   limiter: Ratelimit.fixedWindow(5, "60s"),
 });
 

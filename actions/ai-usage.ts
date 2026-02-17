@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { aiUsage } from "@/db/schema";
 import { getCurrentUserId } from "@/lib/shared";
 import { ValidationError } from "@/types/errors";
-import cuid from "cuid";
 import { and, count, eq, gte } from "drizzle-orm";
 import { z } from "zod";
 
@@ -56,7 +55,7 @@ export async function recordAIUsage(input: {
     const [insertedUsage] = await db
       .insert(aiUsage)
       .values({
-        id: cuid(),
+        id: crypto.randomUUID(),
         userId,
         modelId,
         promptTokens: promptTokens.toString(),

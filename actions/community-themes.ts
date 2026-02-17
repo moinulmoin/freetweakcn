@@ -10,7 +10,6 @@ import {
   user as userTable,
 } from "@/db/schema";
 import { eq, and, desc, asc, sql, count, inArray } from "drizzle-orm";
-import cuid from "cuid";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import {
@@ -34,10 +33,11 @@ import type {
   CommunityThemesResponse,
 } from "@/types/community";
 import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
 
+const redis = Redis.fromEnv();
 const ratelimit = new Ratelimit({
-  redis: kv,
+  redis,
   limiter: Ratelimit.fixedWindow(5, "3600s"),
 });
 
@@ -321,7 +321,7 @@ export async function publishTheme(
       }
     }
 
-    const id = cuid();
+    const id = crypto.randomUUID();
     await db.insert(communityTheme).values({
       id,
       themeId,
