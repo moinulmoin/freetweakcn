@@ -2,13 +2,34 @@
 
 import { suggestion } from "@/components/editor/mention-suggestion";
 import { toast } from "@/hooks/use-toast";
+import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
+
+// Extensions must be created once at module level — tiptap v3 throws
+// "Adding different instances of a keyed plugin" if they're recreated per render.
+const extensions = [
+  StarterKit,
+  Mention.configure({
+    HTMLAttributes: {
+      class: "mention",
+    },
+    suggestion: suggestion,
+  }),
+  Placeholder.configure({
+    placeholder: "Describe your theme...",
+    emptyEditorClass:
+      "cursor-text before:content-[attr(data-placeholder)] before:absolute before:inset-x-1 before:top-1 before:opacity-50 before-pointer-events-none",
+  }),
+  CharacterCount.configure({
+    limit: AI_PROMPT_CHARACTER_LIMIT,
+  }),
+];
 
 interface CustomTextareaProps {
   className?: string;
@@ -35,26 +56,6 @@ export default function CustomTextarea({
   externalEditorContent,
   isStreamingContent = false,
 }: CustomTextareaProps) {
-  const extensions = useMemo(
-    () => [
-      StarterKit,
-      Mention.configure({
-        HTMLAttributes: {
-          class: "mention",
-        },
-        suggestion: suggestion,
-      }),
-      Placeholder.configure({
-        placeholder: "Describe your theme...",
-        emptyEditorClass:
-          "cursor-text before:content-[attr(data-placeholder)] before:absolute before:inset-x-1 before:top-1 before:opacity-50 before-pointer-events-none",
-      }),
-      CharacterCount.configure({
-        limit: characterLimit,
-      }),
-    ],
-    [characterLimit]
-  );
   const editor = useEditor({
     immediatelyRender: false,
     editable: !disabled,
