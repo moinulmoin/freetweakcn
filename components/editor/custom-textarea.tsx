@@ -8,7 +8,7 @@ import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface CustomTextareaProps {
   className?: string;
@@ -35,10 +35,8 @@ export default function CustomTextarea({
   externalEditorContent,
   isStreamingContent = false,
 }: CustomTextareaProps) {
-  const editor = useEditor({
-    immediatelyRender: false,
-    editable: !disabled,
-    extensions: [
+  const extensions = useMemo(
+    () => [
       StarterKit,
       Mention.configure({
         HTMLAttributes: {
@@ -55,6 +53,12 @@ export default function CustomTextarea({
         limit: characterLimit,
       }),
     ],
+    [characterLimit]
+  );
+  const editor = useEditor({
+    immediatelyRender: false,
+    editable: !disabled,
+    extensions,
     autofocus: !disabled,
     editorProps: {
       attributes: {
