@@ -21,13 +21,19 @@ This is a self-hostable fork of [tweakcn](https://github.com/jnsahaj/tweakcn) wi
 | AI provider | Google Gemini | **Any OpenAI-compatible** |
 | Self-hostable | No | **Yes** |
 
+## AI Provider
+
+This edition uses [Novita AI](https://novita.ai/) (Coding plan) as the default AI provider. Novita AI offers an OpenAI-compatible API with access to a wide range of models at competitive pricing.
+
+You can swap to any OpenAI-compatible provider by changing `LLM_BASE_URL` and `LLM_API_KEY` in your environment — [OpenRouter](https://openrouter.ai), [OpenAI](https://platform.openai.com), [Together](https://together.ai), [Groq](https://groq.com), or any other compatible endpoint.
+
 ## Self-Hosting
 
 ### Prerequisites
 
 - Node.js 18+ and pnpm
 - A PostgreSQL database (Neon, Supabase, Railway, any provider — or your own)
-- An API key from any OpenAI-compatible provider ([OpenRouter](https://openrouter.ai), [OpenAI](https://platform.openai.com), [Together](https://together.ai), etc.)
+- An API key from an OpenAI-compatible provider (defaults to [Novita AI](https://novita.ai/))
 - OAuth credentials (Google or GitHub) for user authentication
 
 ### 1. Clone and install
@@ -60,7 +66,7 @@ cp .env.example .env.local
 
 | Variable | Default | Description |
 |---|---|---|
-| `LLM_BASE_URL` | `https://openrouter.ai/api/v1` | Any OpenAI-compatible endpoint |
+| `LLM_BASE_URL` | `https://api.novita.ai/openai` | Any OpenAI-compatible endpoint |
 | `LLM_BASE_MODEL_ID` | `google/gemini-2.5-flash` | Chat model |
 | `LLM_THEME_MODEL_ID` | `google/gemini-2.5-flash` | Theme generation model |
 | `LLM_PROMPT_MODEL_ID` | `google/gemini-2.5-flash` | Prompt enhancement model |
@@ -102,7 +108,7 @@ export const AI_REQUEST_FREE_TIER_LIMIT = 5; // per day — change to whatever y
 ## Credits
 
 - Built on [tweakcn](https://github.com/jnsahaj/tweakcn) by [Sahaj](https://github.com/jnsahaj)
-- AI powered by any OpenAI-compatible provider (defaults to [OpenRouter](https://openrouter.ai))
+- AI powered by [Novita AI](https://novita.ai/) (Coding plan) — works with any OpenAI-compatible provider
 
 ## Sponsor
 
